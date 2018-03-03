@@ -3,6 +3,7 @@ const express = require('express'),
       passport = require('passport'),
       mongoose = require('mongoose'),
       user = mongoose.model('User'),
+      //FIXME:10 please remove this dependency if not used in the code.
       appResponse = require('./../../library/response');
 
 module.exports.controller = function(app){
@@ -18,38 +19,51 @@ module.exports.controller = function(app){
       newUser.save(function(err){
         if(err){
           //please write better error handling.
-          let response = appResponse.generateResponse(true, 'We could not register you at this moment please try again', 500, null);
-          res.send(response);
+          return res.status(500).json({
+            //TODO:10 handle the error properly
+            err:err
+          });
         }
         req.logIn(newUser, function(err){
           if(err){
-            let response = appResponse.generateResponse(true, 'Unauthorized', 401, null);
-            res.send(response);
+            return res.status(401).json({
+              //TODO:20 handle the error properly
+              err:err
+            })
           }
-          let response = appResponse.generateResponse(false, 'Registration Success', 304, req.user);
-          res.send(response);
+          return res.status(200).json({
+            status: 'Registration successful'
+          })
         });
       });
     }else{
-      let response = appResponse.generateResponse(true, 'Some Parameter missing', 403, null);
-      res.send(response);
+      return res.status(403).json({
+        status: 'Some Parameter is missing'
+      })
     }
   });
 
   //login user router
   router.post('/login', function(req, res, next){
     passport.authenticate('local', function(err, user, info){
-      if(err) return next(err);
+      if(err){
+        return next(err);
+      }
       if(!user){
-        let response = appResponse.generateResponse(true, 'Wrong Credentials please check your user name or password', 403, null)
+          return res.status(401).json({
+            err:info
+          })
       }
       req.logIn(user, function(err){
-        if(err){
-          let response = appResponse(true, 'Sorry we could not log you in', 500, null);
-          res.send(response);
+        if(err) {
+            return res.status(500).json({
+              err : 'Could not log in user'
+            });
         }
-        let response = appResponse.generateResponse(false, 'Login Success', 304, req.user);
-        res.send(response);
+        console.log('logged in');
+        return res.status(200).json({
+          status: true
+        });
       });
     })(req, res, next);
   });
@@ -57,7 +71,23 @@ module.exports.controller = function(app){
   //logout logic
   router.get('/logout', function(req, res){
     req.logout();
-    res.redirect('/');
+    return res.status(200).json({
+      status: 'Bye!'
+    });
+  });
+
+  //getUser status router
+  router.get('/userstatus', function(req, res){
+    if(!req.isAuthenticated()){
+      console.log('returning false');
+      return res.status(200).json({
+        status: false
+      })
+    }
+    console.log('jspm');
+    return res.status(200).json({
+      status: true
+    });
   });
 
   app.use(router);

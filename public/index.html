@@ -1,15 +1,34 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>To-do Test</title>
-  <link rel="stylesheet" href="./css/style.css">
-</head>
-<body>
-  <h1>This application is working now.</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
 
-  <script type="text/javascript" src="./js/app.js"></script>
-</body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  </head>
+  <body ng-app="app">
+
+    <p>Welcome to the chat app.</p>
+    <div ng-view></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js" charset="utf-8"></script>
+    <script src="https://code.angularjs.org/1.6.9/angular-route.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js" charset="utf-8"></script>
+    <script src="./app/app.js" charset="utf-8"></script>
+    <script src="./app/modules/chat.module.js" charset="utf-8"></script>
+    <script src="./app/components/home.component.js" charset="utf-8"></script>
+    <script src="./app/components/login.component.js" charset="utf-8"></script>
+    <script src="./app/components/register.component.js" charset="utf-8"></script>
+    <script src="./app/components/chat.component.js" charset="utf-8"></script>
+    <script src="./app/services/auth.service.js" charset="utf-8"></script>
+    <script src="./app/routes.js" charset="utf-8"></script>
+
+    </script>
+  </body>
 </html>
