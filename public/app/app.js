@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const app = angular.module('app', ['ngRoute', 'chatModule']);
+  const app = angular.module('app', ['ngRoute', 'luegg.directives']);
 
 
 }());

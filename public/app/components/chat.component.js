@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  angular.module('chatModule')
+  angular.module('app')
     .component('chat', {
       templateUrl : './app/templates/chat.template.html',
       controller : function chatController($scope, $location, authService, userService){
@@ -11,7 +11,8 @@
         var socket = io();
 
         var username = userService.getUserName();
-        console.log(username);
+
+        vm.glued = true;
 
         socket.on('connected', function(){
           //FIXME: remove this console.log
@@ -20,7 +21,7 @@
 
         });
 
-        socket.emit('userJoined');
+        socket.emit('userJoined', {username: username});
 
         socket.on('disconnected', function(){
           console.log('user has disconnected');
@@ -28,16 +29,20 @@
 
         vm.messages = [];
         socket.on('message', function(message){
-          console.log('message', message);
+          // console.log('message', message);
           vm.messages.push(message);
-          console.log(vm.messages);
+          // console.log(vm.messages);
           $scope.$apply();
         })
 
         vm.newMessage = function(e){
             vm.disabled = true;
+            if(!vm.glued){
+              vm.glued = !vm.glued;
+            }
+            console.log(vm.glued);
             socket.emit('createMessage', {
-              from: 'User',
+              from: username,
               text: vm.text
             }, function(){
               vm.disabled = false;

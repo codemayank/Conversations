@@ -1,0 +1,25 @@
+{
+  "name": "public",
+  "homepage": "https://github.com/codemayank/oneChat",
+  "authors": [
+    "codemayank <mayankyadav14@gmail.com>"
+  ],
+  "description": "public dependencies",
+  "main": "index.html",
+  "keywords": [
+    "chat",
+    "app"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-scroll-glue": "^2.2.0"
+  }
+}

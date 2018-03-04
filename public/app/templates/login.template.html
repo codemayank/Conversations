@@ -1,19 +1,24 @@
-<p>this is the login template.</p>
 
-<div class="col-md-4">
-  <h1>Login</h1>
-  <div ng-show="error" class="alert alert-danger">{{$ctrl.errorMessage}}</div>
-  <form class="form" ng-submit="$ctrl.login()">
-    <div class="form-group">
-      <label>Username</label>
-      <input type="text" class="form-control" name="username" ng-model="$ctrl.loginForm.username" required>
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-        <input type="password" class="form-control" name="password" ng-model="$ctrl.loginForm.password" required>
+<div class="col-md-4 centered-form">
+  <div class="centered-form__form">
+    <div ng-show="error" class="alert alert-danger">{{$ctrl.errorMessage}}</div>
+    <form class="form" ng-submit="$ctrl.login()">
+      <div class="form-field">
+        <h3>Login</h3>
       </div>
-      <div>
-        <button type="submit" class="btn btn-default" ng-disabled="$ctrl.disabled">Login</button>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-control" name="username" ng-model="$ctrl.loginForm.username" required>
       </div>
-  </form>
+      <div class="form-group">
+        <label>Password</label>
+          <input type="password" class="form-control" name="password" ng-model="$ctrl.loginForm.password" required>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary" ng-disabled="$ctrl.disabled">Login</button>
+          <a class="btn btn-primary" ng-disabled="$ctrl.disabled" href="/#!/register">Register</a>
+        </div>
+    </form>
+  </div>
+
 </div>

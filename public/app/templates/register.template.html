@@ -1,21 +1,23 @@
-<div class="col-md-4">
-  <h1>Register</h1>
-  <div ng-show="error" class="alert alert-danger">{{$ctrl.errorMessage}}</div>
-  <form class="form" ng-submit="$ctrl.register()">
-    <div class="form-group">
-      <label>Username</label>
-      <input type="text" class="form-control" name="username" ng-model="$ctrl.registerForm.username" required>
-    </div>
-    <div class="form-group">
-      <label>email</label>
-      <input type="email" class="form-control" name="email" ng-model="$ctrl.registerForm.email" required>
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-        <input type="password" class="form-control" name="password" ng-model="$ctrl.registerForm.password" required>
+<div class="col-xs-10 centered-form">
+  <div class="centered-form__form">
+    <div ng-show="error" class="alert alert-danger">{{$ctrl.errorMessage}}</div>
+    <form class="form" ng-submit="$ctrl.register()">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-control" name="username" ng-model="$ctrl.registerForm.username" required>
       </div>
-      <div>
-        <button type="submit" class="btn btn-default" ng-disabled="$ctrl.disabled">Register</button>
+      <div class="form-group">
+        <label>email</label>
+        <input type="email" class="form-control" name="email" ng-model="$ctrl.registerForm.email" required>
       </div>
-  </form>
+      <div class="form-group">
+        <label>Password</label>
+          <input type="password" class="form-control" name="password" ng-model="$ctrl.registerForm.password" required>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary" ng-disabled="$ctrl.disabled">Register</button>
+          <a class="btn btn-primary" ng-disabled="$ctrl.disabled"  href="/#!/login">Back to Login</a>
+        </div>
+    </form>
+  </div>
 </div>
