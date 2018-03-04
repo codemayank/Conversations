@@ -27,6 +27,8 @@
       return $http.get('/userstatus')
         .then(function successCallback(response) {
             if (response.data.status) {
+              //FIXME: remove this console.log.
+
               user = true;
             } else {
               user = false;
@@ -51,7 +53,7 @@
               //FIXME:50 remove this console.log
               console.log(status);
               user = true;
-              deferred.resolve();
+              deferred.resolve(response);
             } else {
               //FIXME:60 remove this console.log
               console.log(response);

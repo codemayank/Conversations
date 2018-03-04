@@ -1,1 +1,17 @@
-<p>This is the chat template</p>
+<p>This is chat template.</p>
+
+<ul>
+  <li ng-repeat='message in $ctrl.messages'>{{message.from}}: {{message.text}}</li>
+
+</ul>
+
+
+
+<form class="form" ng-submit="$ctrl.newMessage()">
+  <input type="text" name="message" ng-model="$ctrl.text">
+  <button type="submit" class="btn btn-default" ng-disabled="$ctrl.disabled">send</button>
+</form>
+
+<div>
+  <a ng-click='$ctrl.logout()' class="btn btn-default">Logout</a>
+</div>

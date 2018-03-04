@@ -35,6 +35,7 @@ angular.module('app')
       authService.getUserStatus()
         .then(function(){
           if(next.access.restricted && !authService.isLoggedIn()){
+            //TODO: remove this console.log
             console.log(authService.isLoggedIn())
             $location.path('/login');
             $route.reload();

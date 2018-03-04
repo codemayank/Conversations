@@ -4,7 +4,7 @@
   angular.module('app')
     .component('login', {
       templateUrl: './app/templates/login.template.html',
-      controller: function loginController($location, authService) {
+      controller: function loginController($location, authService, userService) {
         let vm = this;
 
         vm.login = function() {
@@ -12,10 +12,12 @@
           vm.disabled = true;
 
           authService.login(vm.loginForm.username, vm.loginForm.password)
-            .then(function() {
+            .then(function(response) {
               //FIXME:20 remove this console.log
+              console.log(response);
+              userService.sendUserName(response.data.username);
               console.log('redirecting');
-              $location.path('/');
+              $location.path('/chat');
               vm.disabled = false;
               vm.loginForm = {};
             })

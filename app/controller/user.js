@@ -62,7 +62,8 @@ module.exports.controller = function(app){
         }
         console.log('logged in');
         return res.status(200).json({
-          status: true
+          status: true,
+          username : req.user.username
         });
       });
     })(req, res, next);
@@ -86,7 +87,8 @@ module.exports.controller = function(app){
     }
     console.log('jspm');
     return res.status(200).json({
-      status: true
+      status: true,
+      username : req.user.username
     });
   });
 
