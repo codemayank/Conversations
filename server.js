@@ -9,7 +9,7 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       fs = require('fs'),
       path =  require('path'),
-      publicPath = path.join(__dirname + '/public');
+      publicPath = path.join(__dirname + '/public'),
       port = process.env.PORT || 3000;
 
 
@@ -26,7 +26,6 @@ fs.readdirSync('./app/models').forEach(function(element){
 });
 
 const user = mongoose.model('User');
-
 app.use(session({
   secret : 'App Secret',
   resave : true,

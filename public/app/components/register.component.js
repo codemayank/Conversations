@@ -3,7 +3,7 @@
   angular.module('app')
     .component('register', {
       templateUrl: './app/templates/register.template.html',
-      controller : function registerController($location, authService){
+      controller : function registerController($location, authService, userService){
 
         var vm = this;
 
@@ -11,13 +11,15 @@
           vm.error = false;
           vm.disabled = true;
 
+
           authService.register(vm.registerForm.username, vm.registerForm.password, vm.registerForm.email)
-            .then(function(){
-              $location.path('/');
+            .then(function(response){
+              userService.sendUserName(response.data.username);
+              $location.path('/chat');
               vm.disabled = false;
               vm.registerForm = {};
             })
-            .catch(function(){
+            .catch(function(response){
               vm.error = true;
               vm.errorMessage = "Something went wrong!";
               vm.disabled = false;

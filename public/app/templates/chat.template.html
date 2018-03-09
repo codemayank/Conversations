@@ -1,26 +1,37 @@
+
 <div class="row">
   <div class="col-lg-2 col-md-0 col-sm-0">
     <div class="chat__sidebar">
       <h3>People</h3>
-      <div id="users">
-
+      <div id = "users">
+        <button ng-click="$ctrl.sendToAll()" type="button" name="button">Send message to everyone.</button>
+      </div>
+      <div id="users" ng-repeat="users in $ctrl.onlineUsers">
+          <button ng-click="$ctrl.sendToOne(users.username)" type="button">{{users.username}}</button>
       </div>
     </div>
   </div>
   <div class="col-lg-10 col-md-0 col-sm-12">
     <div class="chat__main">
-      <ol class="chat__messages" id="messages" scroll-glue = "$ctrl.glued">
-        <li ng-repeat='message in $ctrl.messages'>{{message.from}}: {{message.text}}</li>
-      </ol>
+
+        <ol ng-show="$ctrl.privateChat" class="chat__messages" id="private-messages" scroll-glue = "$ctrl.glued">
+          <li ng-show="$ctrl.typingUser">{{$ctrl.typingUser}} is typing..</li>
+          <li ng-repeat='message in $ctrl.pvtMessageList[$ctrl.selectedIndex].messages track by $index'>{{message.from}} : {{message.text}}</li>
+        </ol>
+
+        <ol ng-show="$ctrl.publicChat" class="chat__messages" id="public-messages" scroll-glue = "$ctrl.glued">
+          <li ng-show="$ctrl.typingUser">{{$ctrl.typingUser}} is typing..</li>
+          <li ng-repeat='message in $ctrl.pubMessageList'>{{message.from}}: {{message.text}}</li>
+        </ol>
+
       <div class="chat__footer">
-        <form id="message-form" ng-submit="$ctrl.newMessage()">
-          <input type="text" name="message" ng-model="$ctrl.text" placeholder="Message" autofocus autocomplete="off" />
-          <button type="submit" ng-disabled="$ctrl.disabled">Submit</button>
+        <form id="message-form" ng-submit="$ctrl.sendMessage()">
+          <input type="text" name="message" ng-model="$ctrl.text" ng-change = '$ctrl.onKeyDown()' placeholder="Message" autofocus autocomplete="off" />
+         <button type="submit" ng-disabled="$ctrl.disabled">Submit</button>
         </form>
         <button id="send-location" ng-click='$ctrl.logout()'>Logout</button>
       </div>
 
     </div>
-
   </div>
 </div>

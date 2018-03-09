@@ -14,13 +14,12 @@ module.exports.controller = function(app){
       let newUser = new user({
         username : req.body.username,
         email : req.body.email,
-        password : req.body.password
+        password : req.body.password,
       });
       newUser.save(function(err){
         if(err){
-          //please write better error handling.
           return res.status(500).json({
-            //TODO:10 handle the error properly
+            //TODO:10 handle the error properly specially when user enters a username that already exisits.
             err:err
           });
         }
@@ -32,7 +31,8 @@ module.exports.controller = function(app){
             })
           }
           return res.status(200).json({
-            status: 'Registration successful'
+            status: true,
+            username : req.user.username
           })
         });
       });
@@ -63,7 +63,7 @@ module.exports.controller = function(app){
         console.log('logged in');
         return res.status(200).json({
           status: true,
-          username : req.user.username
+          username : req.user.username,
         });
       });
     })(req, res, next);

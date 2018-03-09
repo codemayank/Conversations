@@ -1,12 +1,12 @@
 (function() {
   'use strict';
-
+//TODO: IMP when the user reloads the chat page he should be prompted an alert message and redirected to the login page.
 angular.module('app')
   .config(function($routeProvider) {
     $routeProvider
       .when('/', {
-        template: '<home></home>',
-        access: {restricted : true}
+        redirectTo: '/login',
+        access:{restricted : false}
       })
       .when('/login', {
         template:'<login></login>',
@@ -19,10 +19,6 @@ angular.module('app')
       .when('/chat', {
         template: '<chat></chat>',
         access : {restricted : true}
-      })
-      .when('/two', {
-        template:'<h1>This is page two!</h1>',
-        access : {restricted : false}
       })
       .otherwise({
         redirectTo: '/'

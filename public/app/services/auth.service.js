@@ -95,12 +95,13 @@
           password: password,
           email: email
         })
-        .then(function successCallback() {
+        .then(function successCallback(response) {
             if (response.status === 200 && response.data.status) {
               user = true;
+              console.log(response);
 //FIXME:90 remove this console.log
               console.log('login successfull');
-              deferred.resolve();
+              deferred.resolve(response);
             } else {
               user = false;
               deferred.reject();
@@ -108,6 +109,7 @@
           },
           function errorCallback(response) {
             user = false;
+            console.log(response);
             deferred.reject();
           })
       return deferred.promise;
