@@ -3,8 +3,12 @@
 
   angular.module('app')
     .component('login', {
+      // css : './app/styles/loginregister.css',
       templateUrl: './app/templates/login.template.html',
       controller: function loginController($location, authService, userService) {
+
+
+
         let vm = this;
 
         vm.login = function() {

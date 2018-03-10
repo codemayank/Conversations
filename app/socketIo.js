@@ -24,33 +24,37 @@ module.exports.controller = function(server){
   io.on('connection', (socket) => {
     console.log('user ' + socket.id + ' connected');
     let username = "";
+    console.log(io.sockets);
 
     //event fired for initial login,
     socket.on('tellEveryone', (msg, callback) => {
       username = msg.user;
-      let userObj = {
-        socket : socket.id,
-        username : username
-      };
+      let user_index = connectedUsers.findIndex(x => x.username === msg.user);
+      console.log(user_index);
 
+      let notifyMessage = generateMessage('Server', 'All', username + ' is now online.', 'public');
+      if(user_index === -1 || connectedUsers.length === 0){
+        let userObj = {
+          socket : socket.id,
+          username : username
+        };
+          connectedUsers.push(userObj);
+          socket.broadcast.emit('hiEveryone', {user : userObj, message : notifyMessage});
+      }else{
+
+          connectedUsers[user_index].socket = socket.id;
+          socket.broadcast.emit('hiEveryone', {user : connectedUsers[user_index], message : notifyMessage});
+      }
 
       console.log('connectedUsers', connectedUsers);
       messageStoreEmitter.emit('sendConversations', msg.user);
+
       messageStoreEmitter.once('receiveConversations', (data) => {
         console.log('printing data =>', data);
-        console.log(userObj);
-        let welcomeMessage = generateMessage('Server', 'hello ' + username + ' you are now online.');
+        let welcomeMessage = generateMessage('Server', username, 'hello ' + username + ' you are now online.', 'pvt');
         socket.emit('newJoin', {onlineUsers : connectedUsers, message : welcomeMessage, pastConversations : data});
-        connectedUsers.push(userObj);
       })
-
-      console.log('listeners receive conversation', events.listenerCount(messageStoreEmitter, 'receiveConversations'));
-
-
-      let notifyMessage = generateMessage('Server', username + ' is now online.');
-      socket.broadcast.emit('hiEveryone', {user : userObj, message : notifyMessage});
       callback('');
-
     });
 
     //once message is received from the sender transfer it to the database.
@@ -60,24 +64,20 @@ module.exports.controller = function(server){
 
       if(!data.firstMessage){
 
-        let index = connectedUsers.findIndex(x => x.username === data.message.to);
-        let toSocket = connectedUsers[index].socket;
         let message = generateMessage(data.message.from, data.message.to, data.message.text, data.message.type);
-        io.to(toSocket).emit('receiveIncomingMsg', {conversation : data.conversation, message : message});
+        io.to(data.message.toSocket).emit('receiveIncomingMsg', {conversation : data.conversation, message : message});
         callback({message});
         messageStoreEmitter.emit('storeMessage', {conversation : data.conversation, message : message});
       }else{
-        let index = connectedUsers.findIndex(x => x.username === data.conversation.message.to);
-        let toSocket = connectedUsers[index].socket;
         let message = generateMessage(data.conversation.message.from, data.conversation.message.to, data.conversation.message.text, data.conversation.message.type);
         let id = ID();
         let conversation = {
           conversation : id,
           userone : data.conversation.userone,
           usertwo : data.conversation.usertwo,
-          messages : [{conversation : id, message : message}]
+          messages : [message]
         }
-        io.to(toSocket).emit('receiveIncomingMsg', {conversation});
+        io.to(data.conversation.message.toSocket).emit('receiveIncomingMsg', conversation);
         callback({conversation});
         messageStoreEmitter.emit('storeConversation', {conversation});
       }
@@ -99,37 +99,36 @@ module.exports.controller = function(server){
     })
 
     socket.on('createMessage', (msg, callback) => {
-      message = generateMessage(msg.from, msg.text);
+      message = generateMessage(msg.from, msg.to, msg.text, 'public');
       console.log(msg);
       io.emit('newMessage', {message : message});
       callback('');
     })
 
     socket.on('disconnect', () => {
-      disconnectedUser = "";
-      for(let i = 0; i < connectedUsers.length; i++){
-        if(connectedUsers[i].socket === socket.id){
-          disconnectedUser = connectedUsers[i].socket;
-          connectedUsers.splice(i, 1);
-          break;
-        }
-      }
+      let disconnectedUser = "";
+
+      let index = connectedUsers.findIndex( x => x.socket === socket.id);
+      disconnectedUser = connectedUsers[index].username;
+      connectedUsers[index].socket = 'offline';
+
       //FIXME: goodby message not shown.
-      let goodByeMessage = generateMessage('Server', disconnectedUser + " has disconnected.")
+      let goodByeMessage = generateMessage('Server', 'All',  disconnectedUser + " has disconnected.", 'public');
       socket.broadcast.emit('userDisconnected', {disconnectedUser : disconnectedUser, message : goodByeMessage});
       disconnectedUser = "";
     })
 
 })
 
-//logic to store messages / conversations in the database.
+//logic to store conversations in the database.
 messageStoreEmitter.on('storeConversation', (data) =>{
+  console.log(data.conversation.messages);
 
     let newConversation = new messagesCollection({
       conversation : data.conversation.conversation,
       userone : data.conversation.userone,
       usertwo : data.conversation.usertwo,
-      messages : [data.conversation.messages[0].message]
+      messages : data.conversation.messages
     })
     newConversation.save(function(err){
       if(err){
@@ -139,8 +138,10 @@ messageStoreEmitter.on('storeConversation', (data) =>{
     });
 });
 
+//logic to store messages in the database
 messageStoreEmitter.on('storeMessage', (data) => {
-  messagesCollection.findOneAndUpdate({conversation : data.conversation}, {$push : {messages : data.message}}, (err, addedMessage) =>{
+  console.log(data)
+  messagesCollection.findOneAndUpdate({'conversation' : data.conversation}, {$push : {'messages' : data.message}}, (err, addedMessage) =>{
     if(err){
       messageStoreEmitter.emit('error', err);
       console.log(err);
@@ -149,7 +150,7 @@ messageStoreEmitter.on('storeMessage', (data) => {
   })
 });
 
-
+//logic to retreive messages for a particular user based on their username.
 messageStoreEmitter.on('sendConversations', (data) => {
   console.log('a', data);
 

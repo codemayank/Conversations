@@ -12,6 +12,13 @@
 
         vm.onlineUsers = [];
         vm.pubMessageList = [];
+        vm.sendToAll = true
+        vm.toUsername = "";
+        vm.publicChat = true;
+        vm.privateChat = false;
+        vm.selectedIndex;
+        vm.pvtMessageList = [];
+        let connectedUsersList = [];
 
         clientSocket.on('connect', function() {
           clientSocket.emit('tellEveryone', {
@@ -24,8 +31,18 @@
 
 
         clientSocket.on('hiEveryone', function(msg) {
-          console.log('hiEveryone')
-          vm.onlineUsers.push(msg.user);
+          console.log('hiEveryone');
+          let user_index = vm.onlineUsers.findIndex(x => x.username === msg.user.username)
+          console.log(user_index);
+          console.log(vm.onlineUsers);
+          if(user_index === -1){
+            console.log('pushing new user');
+            vm.onlineUsers.push(msg.user);
+          }else{
+            vm.onlineUsers[user_index].socket = msg.user.socket;
+          }
+
+          console.log(msg.user);
           vm.pubMessageList.push(msg.message);
           console.log(vm.pubMessageList);
           $scope.$apply()
@@ -102,13 +119,7 @@
         //-------------------------started typing and stopped typing messages---------------
 
         //--------------------------------pvt chat logic--------------------------------
-        vm.sendToAll = true
-        vm.toUsername = "";
-        vm.publicChat = true;
-        vm.privateChat = false;
-        vm.selectedIndex;
-        vm.pvtMessageList = [];
-        let connectedUsersList = [];
+
 
         vm.sendToOne = function(toUsername) {
           vm.sendToAll = false;
@@ -119,20 +130,16 @@
             console.log(connectedUsersList);
             vm.selectedIndex = connectedUsersList.findIndex(x => x.user === toUsername);
             console.log(vm.selectedIndex);
-
           } else {
             if(connectedUsersList.length === 0){
               console.log('this connected users 0')
               vm.selectedIndex = 0;
               console.log(vm.selectedIndex);
             }else{
-
               vm.selectedIndex = connectedUsersList.length;
               console.log(connectedUsersList);
               console.log(vm.selectedIndex);
             }
-
-
           }
         };
 
@@ -156,26 +163,24 @@
 
         //FIXME: check requirement of userone and usertwo fields in conversation object and type field in the message object.
         vm.sendMessageToOne = function(toUsername) {
-          let startNewConversation = false;
+
           let currentConversation = null;
           if(connectedUsersList.findIndex(x => x.user === toUsername) != -1){
             console.log('continues with current connection');
-            startNewConversation = false;
             currentConversation = connectedUsersList[connectedUsersList.findIndex(x => x.user === toUsername)].conversation_id;
             console.log(currentConversation);
-          }else{
-            console.log('starts new connection');
-            startNewConversation = true
           }
 
           let index = vm.pvtMessageList.findIndex(x => x.conversation === currentConversation);
           console.log(vm.pvtMessageList);
           console.log(index);
+          let userIndex = vm.onlineUsers.findIndex(x => x.username === toUsername);
           let message = {
             from: vm.username,
             to: toUsername,
             text: vm.text,
-            type: "pvt"
+            type: "pvt",
+            toSocket : vm.onlineUsers[userIndex].socket
           }
           if (index != -1) {
             //FIXME : messages directly stored on the client side will not have a time stamp.
@@ -217,6 +222,7 @@
         };
 
         clientSocket.on('receiveIncomingMsg', function(msg) {
+          console.log(msg);
           let index = vm.pvtMessageList.findIndex(x => x.conversation === msg.conversation);
           console.log(index);
           if (index != -1) {
@@ -224,9 +230,9 @@
             console.log(vm.pvtMessageList);
             $scope.$apply();
           } else {
-            connectedUsersList.push({user : msg.conversation.userone, conversation_id : msg.conversation.conversation});
+            connectedUsersList.push({user : msg.userone, conversation_id : msg.conversation});
             console.log(connectedUsersList);
-            vm.pvtMessageList.push(msg.conversation)
+            vm.pvtMessageList.push(msg)
             console.log(vm.pvtMessageList);
             $scope.$apply();
           }
@@ -236,8 +242,10 @@
 
 
         clientSocket.on('userDisconnected', function(msg) {
-          let index = vm.onlineUsers.findIndex(x => x.socket === msg.disconnectedUser);
-          vm.onlineUsers.splice(index, 1);
+          console.log(msg);
+          let index = vm.onlineUsers.findIndex(x => x.username === msg.disconnectedUser);
+          vm.pubMessageList.push(msg.message);
+          vm.onlineUsers[index].socket = 'offline';
           $scope.$apply();
         });
 

@@ -1,9 +1,10 @@
-let generateMessage = (from, to, text, type) =>{
+//remove msgtype
+let generateMessage = (from, to, text, msgtype) =>{
   return{
     from,
     to,
-    type,
     text,
+    msgtype,
     createdAt : new Date().getTime()
   };
 }
