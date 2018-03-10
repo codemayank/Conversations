@@ -15,6 +15,7 @@ module.exports.controller = function(server){
   const numberOflisteners = events.EventEmitter.listenerCount(messageStoreEmitter, 'receiveConversations');
   console.log('number of listeners receiveconversations', numberOflisteners);
 
+  //TODO make this id function return random id alpha numeric strings.
   let ID = function() {
     return '_' + Math.random().toString(36).substr(2, 9);
   };
@@ -65,7 +66,9 @@ module.exports.controller = function(server){
       if(!data.firstMessage){
 
         let message = generateMessage(data.message.from, data.message.to, data.message.text, data.message.type);
-        io.to(data.message.toSocket).emit('receiveIncomingMsg', {conversation : data.conversation, message : message});
+        if(data.message.toSocket != "offline"){
+          io.to(data.message.toSocket).emit('receiveIncomingMsg', {conversation : data.conversation, message : message});
+        }
         callback({message});
         messageStoreEmitter.emit('storeMessage', {conversation : data.conversation, message : message});
       }else{
@@ -77,7 +80,9 @@ module.exports.controller = function(server){
           usertwo : data.conversation.usertwo,
           messages : [message]
         }
-        io.to(data.conversation.message.toSocket).emit('receiveIncomingMsg', conversation);
+        if(data.conversation.message.toSocket != "offline"){
+          io.to(data.conversation.message.toSocket).emit('receiveIncomingMsg', conversation);
+        }
         callback({conversation});
         messageStoreEmitter.emit('storeConversation', {conversation});
       }
