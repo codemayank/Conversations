@@ -109,6 +109,7 @@ module.exports.controller = function(server){
       let disconnectedUser = "";
 
       let index = connectedUsers.findIndex( x => x.socket === socket.id);
+      console.log('connectedUsers', index, connectedUsers);
       disconnectedUser = connectedUsers[index].username;
       connectedUsers[index].socket = 'offline';
 
@@ -154,7 +155,7 @@ messageStoreEmitter.on('storeMessage', (data) => {
 messageStoreEmitter.on('sendConversations', (data) => {
   console.log('a', data);
 
-  messagesCollection.find({$or : [{"userone" : data}, {"usertwo" : data}]}, (err, foundMessages) => {
+  messagesCollection.find({$or : [{"userone" : data}, {"usertwo" : data}]}, "conversation userone usertwo messages.createdAt messages.from messages.text messages.to messages.msgtype", (err, foundMessages) => {
     if(err){
       console.log('found error');
       console.log(err);

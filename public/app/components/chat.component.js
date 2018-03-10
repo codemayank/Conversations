@@ -50,6 +50,14 @@
 
         clientSocket.on('newJoin', function(msg) {
           console.log('got new join', msg);
+          vm.pvtMessageList = msg.pastConversations;
+          msg.pastConversations.forEach(function(conversation){
+            if(conversation.userone === vm.username){
+              connectedUsersList.push({user : conversation.usertwo, conversation_id : conversation.conversation});
+            }else if(conversation.usertwo === vm.username){
+              connectedUsersList.push({user : conversation.userone, conversation_id : conversation.conversation});
+            }
+          });
           vm.onlineUsers = msg.onlineUsers;
           vm.pubMessageList.push(msg.message);
           console.log(vm.pubMessageList);
