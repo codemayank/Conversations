@@ -13,7 +13,7 @@ module.exports.controller = function(server){
   const users = mongoose.model('User');
 
   const numberOflisteners = events.EventEmitter.listenerCount(messageStoreEmitter, 'receiveConversations');
-  console.log('number of listeners receiveconversations', numberOflisteners);
+  // //console.log('number of listeners receiveconversations', numberOflisteners);
 
   //TODO make this id function return random id alpha numeric strings.
   let ID = function() {
@@ -22,16 +22,17 @@ module.exports.controller = function(server){
 
   let connectedUsers = [];
   let rooms = [];
+
   io.on('connection', (socket) => {
-    console.log('user ' + socket.id + ' connected');
+    // //console.log('user ' + socket.id + ' connected');
     let username = "";
-    console.log(io.sockets);
+    // //console.log(io.sockets);
 
     //event fired for initial login,
     socket.on('tellEveryone', (msg, callback) => {
       username = msg.user;
       let user_index = connectedUsers.findIndex(x => x.username === msg.user);
-      console.log(user_index);
+      // //console.log(user_index);
 
       let notifyMessage = generateMessage('Server', 'All', username + ' is now online.', 'public');
       if(user_index === -1 || connectedUsers.length === 0){
@@ -51,7 +52,7 @@ module.exports.controller = function(server){
       messageStoreEmitter.emit('sendConversations', msg.user);
 
       messageStoreEmitter.once('receiveConversations', (data) => {
-        console.log('printing data =>', data);
+        //console.log('printing data =>', data);
         let welcomeMessage = generateMessage('Server', username, 'hello ' + username + ' you are now online.', 'pvt');
         socket.emit('newJoin', {onlineUsers : connectedUsers, message : welcomeMessage, pastConversations : data});
       })
@@ -61,7 +62,7 @@ module.exports.controller = function(server){
     //once message is received from the sender transfer it to the database.
 
     socket.on('sendMessageTo', (data, callback) => {
-      console.log(data);
+      //console.log(data);
 
       if(!data.firstMessage){
 
@@ -94,8 +95,6 @@ module.exports.controller = function(server){
         let index = connectedUsers.findIndex(x => x.username === data.usertwo);
         let toSocket = connectedUsers[index].socket;
         io.to(toSocket).emit('userTyping', data.userone);
-      }else{
-        socket.broadcast.emit('userTyping', data.userone);
       }
     })
 
@@ -105,7 +104,7 @@ module.exports.controller = function(server){
 
     socket.on('createMessage', (msg, callback) => {
       message = generateMessage(msg.from, msg.to, msg.text, 'public');
-      console.log(msg);
+      //console.log(msg);
       io.emit('newMessage', {message : message});
       callback('');
     })
@@ -114,13 +113,15 @@ module.exports.controller = function(server){
       let disconnectedUser = "";
 
       let index = connectedUsers.findIndex( x => x.socket === socket.id);
-      console.log('connectedUsers', index, connectedUsers);
-      disconnectedUser = connectedUsers[index].username;
-      connectedUsers[index].socket = 'offline';
-
+      //console.log('connectedUsers', index, connectedUsers);
+      if(index != -1){
+        disconnectedUser = connectedUsers[index].username;
+        connectedUsers[index].socket = 'offline';
+        let goodByeMessage = generateMessage('Server', 'All',  disconnectedUser + " has disconnected.", 'public');
+        socket.broadcast.emit('userDisconnected', {disconnectedUser : disconnectedUser, message : goodByeMessage});
+        console.log(connectedUsers);
+      }
       //FIXME: goodby message not shown.
-      let goodByeMessage = generateMessage('Server', 'All',  disconnectedUser + " has disconnected.", 'public');
-      socket.broadcast.emit('userDisconnected', {disconnectedUser : disconnectedUser, message : goodByeMessage});
       disconnectedUser = "";
     })
 
@@ -128,7 +129,7 @@ module.exports.controller = function(server){
 
 //logic to store conversations in the database.
 messageStoreEmitter.on('storeConversation', (data) =>{
-  console.log(data.conversation.messages);
+  //console.log(data.conversation.messages);
 
     let newConversation = new messagesCollection({
       conversation : data.conversation.conversation,
@@ -140,42 +141,42 @@ messageStoreEmitter.on('storeConversation', (data) =>{
       if(err){
         messageStoreEmitter.emit('error', err)
       }
-      console.log('document successfully saved');
+      //console.log('document successfully saved');
     });
 });
 
 //logic to store messages in the database
 messageStoreEmitter.on('storeMessage', (data) => {
-  console.log(data)
+  //console.log(data)
   messagesCollection.findOneAndUpdate({'conversation' : data.conversation}, {$push : {'messages' : data.message}}, (err, addedMessage) =>{
     if(err){
       messageStoreEmitter.emit('error', err);
-      console.log(err);
+      //console.log(err);
     }
-    console.log('message added successfully');
+    //console.log('message added successfully');
   })
 });
 
 //logic to retreive messages for a particular user based on their username.
 messageStoreEmitter.on('sendConversations', (data) => {
-  console.log('a', data);
+  //console.log('a', data);
 
   messagesCollection.find({$or : [{"userone" : data}, {"usertwo" : data}]}, "conversation userone usertwo messages.createdAt messages.from messages.text messages.to messages.msgtype", (err, foundMessages) => {
     if(err){
-      console.log('found error');
-      console.log(err);
+      //console.log('found error');
+      //console.log(err);
       messageStoreEmitter.emit('receiveConversations', err);
     }else{
-      console.log('b');
-      console.log('found Messages =>', foundMessages);
-      console.log('found messages executed');
+      //console.log('b');
+      //console.log('found Messages =>', foundMessages);
+      //console.log('found messages executed');
       messageStoreEmitter.emit('receiveConversations', foundMessages);
     }
   });
 })
 
 messageStoreEmitter.on('error', (error) =>{
-  console.log('there has been an error', error);
+  //console.log('there has been an error', error);
 })
 
 }

@@ -1,11 +1,8 @@
-
+<!--
 <div class="row">
   <div class="col-lg-2 col-md-0 col-sm-0">
     <div class="chat__sidebar">
       <h3>People</h3>
-      <div id = "users">
-        <button ng-click="$ctrl.sendToAll()" type="button" name="button">Send message to everyone.</button>
-      </div>
       <div id="users" ng-repeat="users in $ctrl.onlineUsers">
           <button ng-click="$ctrl.sendToOne(users.username)" type="button">{{users.username}}</button>
       </div>
@@ -15,7 +12,7 @@
     <div class="chat__main">
 
         <ol ng-show="$ctrl.privateChat" class="chat__messages" id="private-messages" scroll-glue = "$ctrl.glued">
-          <li ng-show="$ctrl.typingUser">{{$ctrl.typingUser}} is typing..</li>
+          <li ng-show="$ctrl.typingUser"></li>
           <li ng-repeat='message in $ctrl.pvtMessageList[$ctrl.selectedIndex].messages track by $index'>{{message.from}} : {{message.text}}</li>
         </ol>
 
@@ -34,4 +31,56 @@
 
     </div>
   </div>
-</div>
+</div> -->
+
+<div class="wrapper">
+        <div class="main-head">
+          <div class="user-name">
+              <h5>{{$ctrl.username}}</h5>
+          </div>
+          <div class="top-nav">
+            <div class="other-user">
+              <h5>{{$ctrl.toUsername}}<span ng-show="$ctrl.typingUser === $ctrl.toUsername">is typing..</span></h5>
+            </div>
+            <div class="flash-message">
+              <flash-message class="flash"></flash-message>
+            </div>
+            <div class="logout">
+                <button class="btn btn-primary" ng-click='$ctrl.logout()'>Logout</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="main-nav">
+          <div>
+			         <input type="text" placeholder="Search contacts..." />
+		       </div>
+           <ul class="list-group">
+              <li ng-repeat="users in $ctrl.onlineUsers" ng-show="users.username" ng-click="$ctrl.sendToOne(users.username)" class="list-group-item user_link">{{users.username}}<span ng-show="$ctrl.typingUser === users.username">typing...</span></li>
+            </ul>
+        </div>
+      <div ng-show ="!$ctrl.toUsername" class="content">
+        <div class="container">
+          .<div class="jumbotron">
+            <h1>Welcome to Conversations</h1>
+            <p>click on a user to start chatting with them.. if there are no users please add more</p>
+          </div>
+        </div>
+      </div>
+      <div ng-show = "$ctrl.toUsername" class="content" scroll-glue = "$ctrl.glued">
+            <div ng-repeat='message in $ctrl.pvtMessageList[$ctrl.selectedIndex].messages track by $index' class="message-body">
+                <div ng-class="$ctrl.messagePosition(message.from)">
+                  <div class="message-text">
+                      {{message.from}} : {{message.text}}
+                  </div>
+                  <span class="message-time pull-right">{{message.createdAt | amCalendar:referenceTime:formats}}</span>
+                </div>
+            </div>
+      </div>
+        <div ng-show="$ctrl.toUsername" class="main-footer">
+          <form class="form" ng-submit="$ctrl.sendMessage()">
+            <textarea type="text" name="message" ng-model="$ctrl.text" ng-change = '$ctrl.onKeyDown()' placeholder="Message" autofocus autocomplete="off" ng-disabled = "$ctrl.disabled" />
+           <button class="btn btn-primary" type="submit" ng-disabled="$ctrl.disabled">Submit</button>
+          </form>
+        </div>
+    </div>

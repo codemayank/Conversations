@@ -2,13 +2,18 @@
   'use strict';
   angular.module('app')
     .component('chat', {
+      css : './app/styles/chat.css',
       templateUrl: './app/templates/chat.template.html',
-      controller: function chatController($scope, $location, authService, userService) {
-        //TODO: write the chat logic here!
+      controller: function chatController($scope, $location, authService, userService, Flash, moment) {
 
-        var clientSocket = io();
+        //TODO: write the chat logic here!
+        
+        var clientSocket;
         let vm = this;
         vm.username = userService.getUserName();
+        if(vm.username !=  null){
+          clientSocket = io();
+        }
 
         vm.onlineUsers = [];
         vm.pubMessageList = [];
@@ -18,7 +23,31 @@
         vm.privateChat = false;
         vm.selectedIndex;
         vm.pvtMessageList = [];
+        vm.disabled = true;
         let connectedUsersList = [];
+
+        vm.logout = function() {
+          authService.logout()
+            .then(function() {
+              if(vm.username){
+                  clientSocket.disconnect();
+              }
+              $location.path('/login');
+            });
+        }
+
+        if(vm.username === null){
+            vm.logout();
+        }
+
+        vm.successAlert = function(message){
+          let id = Flash.create('success', message, 2000, true);
+        }
+
+        vm.infoAlert = function(message){
+          let id = Flash.create('info', message, 2000, true);
+        }
+
 
         clientSocket.on('connect', function() {
           clientSocket.emit('tellEveryone', {
@@ -43,6 +72,7 @@
           }
 
           console.log(msg.user);
+          vm.infoAlert(msg.message.text);
           vm.pubMessageList.push(msg.message);
           console.log(vm.pubMessageList);
           $scope.$apply()
@@ -59,6 +89,7 @@
             }
           });
           vm.onlineUsers = msg.onlineUsers;
+          vm.successAlert(msg.message.text);
           vm.pubMessageList.push(msg.message);
           console.log(vm.pubMessageList);
           $scope.$apply();
@@ -100,12 +131,6 @@
                 usertwo: vm.toUsername
               });
               timeout = setTimeout(timeoutFunction, 500);
-            } else {
-              clientSocket.emit('startedTyping', {
-                userone: vm.username,
-                usertwo: null
-              });
-              timeout = setTimeout(timeoutFunction, 500);
             }
           } else {
             clearTimeout(timeout);
@@ -120,7 +145,7 @@
         })
 
         clientSocket.on('userNotTyping', function() {
-          vm.typingUser = "";
+          vm.typingUser = "asp";
           $scope.$apply();
         })
 
@@ -130,6 +155,7 @@
 
 
         vm.sendToOne = function(toUsername) {
+          vm.disabled = false;
           vm.sendToAll = false;
           vm.toUsername = toUsername;
           vm.publicChat = false;
@@ -151,19 +177,22 @@
           }
         };
 
-        vm.sendToAll = function() {
-          vm.sendToAll = true;
-          vm.toUsername = "";
-          vm.publicChat = true;
-          vm.privateChat = false;
-        };
+        //FIXME if not required remove below commented code.
+        // vm.sendToAll = function() {
+        //   vm.sendToAll = true;
+        //   vm.toUsername = "";
+        //   vm.publicChat = true;
+        //   vm.privateChat = false;
+        // };
 
         vm.sendMessage = function() {
-          if (vm.sendToAll) {
-            vm.sendMessageToAll();
-          } else {
-            vm.sendMessageToOne(vm.toUsername);
-          }
+          //FIXME if not required remove below commented code.
+          // if (vm.sendToAll) {
+          //   vm.sendMessageToAll();
+          // } else {
+          //   vm.sendMessageToOne(vm.toUsername);
+          // }
+          vm.sendMessageToOne(vm.toUsername);
         };
 
         //create conversation id
@@ -246,24 +275,26 @@
           }
         });
 
+        vm.messagePosition = function(from){
+          if(from === vm.username){
+            return "message-main-sender";
+          }else{
+            return "message-main-receiver";
+          }
+        }
+
         //--------------------------------pvt chat logic--------------------------------
 
 
         clientSocket.on('userDisconnected', function(msg) {
           console.log(msg);
           let index = vm.onlineUsers.findIndex(x => x.username === msg.disconnectedUser);
-          vm.pubMessageList.push(msg.message);
+          vm.infoAlert(msg.message.text);
           vm.onlineUsers[index].socket = 'offline';
           $scope.$apply();
         });
 
-        vm.logout = function() {
-          authService.logout()
-            .then(function() {
-              clientSocket.disconnect();
-              $location.path('/login');
-            });
-        }
+
       }
     });
 }());
