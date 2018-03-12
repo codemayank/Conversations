@@ -25,6 +25,8 @@
         vm.pvtMessageList = [];
         vm.disabled = true;
         let connectedUsersList = [];
+ 
+        console.log(vm.glued);
 
         vm.logout = function() {
           authService.logout()
@@ -88,6 +90,8 @@
               connectedUsersList.push({user : conversation.userone, conversation_id : conversation.conversation});
             }
           });
+          let user_index = msg.onlineUsers.findIndex(x => x.username === vm.username);
+          msg.onlineUsers.splice(user_index, 1);
           vm.onlineUsers = msg.onlineUsers;
           vm.successAlert(msg.message.text);
           vm.pubMessageList.push(msg.message);
@@ -160,6 +164,7 @@
           vm.toUsername = toUsername;
           vm.publicChat = false;
           vm.privateChat = true;
+          vm.glued = true;
           if (connectedUsersList.findIndex(x => x.user === toUsername) != -1) {
             console.log(connectedUsersList);
             vm.selectedIndex = connectedUsersList.findIndex(x => x.user === toUsername);
@@ -192,6 +197,7 @@
           // } else {
           //   vm.sendMessageToOne(vm.toUsername);
           // }
+          vm.glued = true;
           vm.sendMessageToOne(vm.toUsername);
         };
 
@@ -238,11 +244,8 @@
               usertwo : toUsername,
               message: message
             }
-
+            
             console.log(conversation);
-
-
-
             clientSocket.emit('sendMessageTo', {
                 conversation: conversation,
                 firstMessage: true
@@ -280,6 +283,14 @@
             return "message-main-sender";
           }else{
             return "message-main-receiver";
+          }
+        }
+
+        vm.messageOwner = function(from){
+          if(from === vm.username){
+            return "sender";
+          }else{
+            return "receiver";
           }
         }
 

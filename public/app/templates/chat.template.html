@@ -35,12 +35,8 @@
 
 <div class="wrapper">
         <div class="main-head">
-          <div class="user-name">
-              <h5>{{$ctrl.username}}</h5>
-          </div>
-          <div class="top-nav">
             <div class="other-user">
-              <h5>{{$ctrl.toUsername}}<span ng-show="$ctrl.typingUser === $ctrl.toUsername">is typing..</span></h5>
+              <h5>{{$ctrl.toUsername | uppercase}}<span ng-show="$ctrl.typingUser === $ctrl.toUsername">&nbsp;is typing..</span></h5>
             </div>
             <div class="flash-message">
               <flash-message class="flash"></flash-message>
@@ -48,32 +44,57 @@
             <div class="logout">
                 <button class="btn btn-primary" ng-click='$ctrl.logout()'>Logout</button>
             </div>
-          </div>
         </div>
 
+        <!-- user list for mobile -->
+        <div ng-show="$ctrl.showUserListMobile" class="user-list-mobile">
+            <h3>Users List</h3>
+            <div class="panel-group">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <button data-toggle="collapse" data-target="#collapse1">Collapsible list group</button>
+                  </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse">
+                  <ul class="list-group">
+                      <li ng-repeat="users in $ctrl.onlineUsers | filter : searchUser" ng-show="users.username" ng-click="$ctrl.sendToOne(users.username)" class="list-group-item user_link">{{users.username | uppercase}}<span ng-show="$ctrl.typingUser === users.username">&nbsp;typing...</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
         <div class="main-nav">
-          <div>
-			         <input type="text" placeholder="Search contacts..." />
-		       </div>
-           <ul class="list-group">
-              <li ng-repeat="users in $ctrl.onlineUsers" ng-show="users.username" ng-click="$ctrl.sendToOne(users.username)" class="list-group-item user_link">{{users.username}}<span ng-show="$ctrl.typingUser === users.username">typing...</span></li>
-            </ul>
+            <div class="user-name">
+                <h5>{{$ctrl.username | uppercase}}</h5>
+            </div>
+            <div class="users-list">
+                <div>
+                    <input type="text" class="form-control" ng-model="searchUser" placeholder="Search contacts..." />
+                </div>
+                <ul class="list-group">
+                   <li ng-repeat="users in $ctrl.onlineUsers | filter : searchUser" ng-show="users.username" ng-click="$ctrl.sendToOne(users.username)" class="list-group-item user_link">{{users.username | uppercase}}<span ng-show="$ctrl.typingUser === users.username">typing...</span></li>
+                 </ul>
+            </div>
         </div>
       <div ng-show ="!$ctrl.toUsername" class="content">
         <div class="container">
-          .<div class="jumbotron">
+          .<div class="jumbotron jumbotron-fluid">
             <h1>Welcome to Conversations</h1>
             <p>click on a user to start chatting with them.. if there are no users please add more</p>
           </div>
         </div>
       </div>
-      <div ng-show = "$ctrl.toUsername" class="content" scroll-glue = "$ctrl.glued">
-            <div ng-repeat='message in $ctrl.pvtMessageList[$ctrl.selectedIndex].messages track by $index' class="message-body">
+      <div ng-show = "$ctrl.toUsername" class="content" scroll-glue = "$ctrl.glued" class="message-body">
+            <div ng-repeat='message in $ctrl.pvtMessageList[$ctrl.selectedIndex].messages track by $index'>
                 <div ng-class="$ctrl.messagePosition(message.from)">
-                  <div class="message-text">
-                      {{message.from}} : {{message.text}}
+                  <div ng-class="$ctrl.messageOwner(message.from)">
+                      <div class="message-text">
+                          {{message.from}} : {{message.text}}
+                      </div>
+                      <span class="message-time pull-right">{{message.createdAt | amCalendar:referenceTime:formats}}</span>
                   </div>
-                  <span class="message-time pull-right">{{message.createdAt | amCalendar:referenceTime:formats}}</span>
                 </div>
             </div>
       </div>
