@@ -43,11 +43,11 @@
         }
 
         vm.successAlert = function(message){
-          let id = Flash.create('success', message, 2000, true);
+          let id = Flash.create('success', message, 5000, true);
         }
 
         vm.infoAlert = function(message){
-          let id = Flash.create('info', message, 2000, true);
+          let id = Flash.create('info', message, 5000, true);
         }
 
 
