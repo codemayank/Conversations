@@ -10,6 +10,7 @@ A one-to-one chat messenger made using Node.js, Express, MongoDB, socketio and A
 * Messages are stored is a database so can be retrieved online.
 
 Usage
+=====
 To use the app on local server
 1. run npm install to install all the dependencies.
 2. run node server.js to start the app.
