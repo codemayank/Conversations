@@ -5,7 +5,7 @@
     .factory('userService', [userService])
 
     function userService(){
-      let userName = null;
+      var userName = null;
       return{
         sendUserName : sendUserName,
         getUserName : getUserName

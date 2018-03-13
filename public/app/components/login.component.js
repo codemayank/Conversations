@@ -3,13 +3,13 @@
 
   angular.module('app')
     .component('login', {
-      // css : './app/styles/loginregister.css',
       templateUrl: './app/templates/login.template.html',
-      controller: function loginController($location, authService, userService) {
-
-
+      controller: function loginController($location, authService, userService, Flash) {
 
         let vm = this;
+        vm.errorAlert = function(message){
+          let id = Flash.create('info', message, 5000, true);
+        }
 
         vm.login = function() {
           vm.error = false;
@@ -17,24 +17,23 @@
 
           authService.login(vm.loginForm.username, vm.loginForm.password)
             .then(function(response) {
-              //FIXME:20 remove this console.log
-              console.log(response);
               userService.sendUserName(response.data.username);
-              console.log('redirecting');
               $location.path('/chat');
               vm.disabled = false;
               vm.loginForm = {};
             })
-            .catch(function() {
-              //FIXME:40 remove this console.log
-              console.log('this is happening');
+            .catch(function(response) {
               vm.error = true;
-              vm.errorMessage = "Invalid username and/or password";
+              if(response.status === 500){
+                vm.errorAlert('Sorry Something went wrong! please try to login after some time');
+              }
+              else{
+                vm.errorAlert(response.data.err.message);
+              }
               vm.disabled = false;
               vm.loginForm = {};
             });
         }
       }
     })
-
 }());

@@ -27,7 +27,6 @@
       return $http.get('/userstatus')
         .then(function successCallback(response) {
             if (response.data.status) {
-              //FIXME: remove this console.log.
 
               user = true;
             } else {
@@ -41,7 +40,6 @@
     }
 
     function login(username, password) {
-      //TODO:30 understand what this line of code does.
       var deferred = $q.defer();
 
       $http.post('/login', {
@@ -50,25 +48,17 @@
         })
         .then(function successCallback(response) {
             if (response.status === 200 && response.data.status) {
-              //FIXME:50 remove this console.log
-              console.log(status);
               user = true;
               deferred.resolve(response);
             } else {
-              //FIXME:60 remove this console.log
-              console.log(response);
               user = false;
-              deferred.reject();
+              deferred.reject(response);
             }
           },
           function errorCallback(response) {
-            //FIXME:70 remove this console.log
-            console.log(response);
             user = false;
-            deferred.reject();
+            deferred.reject(response);
           })
-              //FIXME:80 remove this console.log
-          console.log(deferred.promise);
       return deferred.promise;
     }
 
@@ -89,7 +79,6 @@
 
     function register(username, password, email) {
       var deferred = $q.defer();
-
       $http.post('/register', {
           username: username,
           password: password,
@@ -98,19 +87,17 @@
         .then(function successCallback(response) {
             if (response.status === 200 && response.data.status) {
               user = true;
-              console.log(response);
-//FIXME:90 remove this console.log
               console.log('login successfull');
               deferred.resolve(response);
             } else {
               user = false;
-              deferred.reject();
+              deferred.reject(response);
             }
           },
           function errorCallback(response) {
             user = false;
             console.log(response);
-            deferred.reject();
+            deferred.reject(response);
           })
       return deferred.promise;
     }

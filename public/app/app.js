@@ -1,5 +1,5 @@
 (function() {
   'use strict';
-  const app = angular.module('app', ['ngRoute', 'luegg.directives', 'angularCSS', 'ngFlash', 'angularMoment']);
+  const app = angular.module('app', ['ngRoute', 'luegg.directives', 'angularCSS', 'ngFlash', 'angularMoment', 'ui-notification']);
 
 }());

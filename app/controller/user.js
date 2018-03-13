@@ -2,9 +2,8 @@ const express = require('express'),
       router = express.Router(),
       passport = require('passport'),
       mongoose = require('mongoose'),
-      user = mongoose.model('User'),
-      //FIXME:10 please remove this dependency if not used in the code.
-      appResponse = require('./../../library/response');
+      user = mongoose.model('User');
+
 
 module.exports.controller = function(app){
 
@@ -19,14 +18,12 @@ module.exports.controller = function(app){
       newUser.save(function(err){
         if(err){
           return res.status(500).json({
-            //TODO:10 handle the error properly specially when user enters a username that already exisits.
             err:err
           });
         }
         req.logIn(newUser, function(err){
           if(err){
             return res.status(401).json({
-              //TODO:20 handle the error properly
               err:err
             })
           }
@@ -57,10 +54,9 @@ module.exports.controller = function(app){
       req.logIn(user, function(err){
         if(err) {
             return res.status(500).json({
-              err : 'Could not log in user'
+              err : err
             });
         }
-        console.log('logged in');
         return res.status(200).json({
           status: true,
           username : req.user.username,
@@ -80,12 +76,10 @@ module.exports.controller = function(app){
   //getUser status router
   router.get('/userstatus', function(req, res){
     if(!req.isAuthenticated()){
-      console.log('returning false');
       return res.status(200).json({
         status: false
       })
     }
-    console.log('jspm');
     return res.status(200).json({
       status: true,
       username : req.user.username

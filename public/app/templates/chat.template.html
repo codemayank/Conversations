@@ -1,172 +1,96 @@
-<!--
-<div class="row">
-  <div class="col-lg-2 col-md-0 col-sm-0">
-    <div class="chat__sidebar">
-      <h3>People</h3>
-      <div id="users" ng-repeat="users in $ctrl.onlineUsers">
-          <button ng-click="$ctrl.sendToOne(users.username)" type="button">{{users.username}}</button>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-10 col-md-0 col-sm-12">
-    <div class="chat__main">
-
-        <ol ng-show="$ctrl.privateChat" class="chat__messages" id="private-messages" scroll-glue = "$ctrl.glued">
-          <li ng-show="$ctrl.typingUser"></li>
-          <li ng-repeat='message in $ctrl.pvtMessageList[$ctrl.selectedIndex].messages track by $index'>{{message.from}} : {{message.text}}</li>
-        </ol>
-
-        <ol ng-show="$ctrl.publicChat" class="chat__messages" id="public-messages" scroll-glue = "$ctrl.glued">
-          <li ng-show="$ctrl.typingUser">{{$ctrl.typingUser}} is typing..</li>
-          <li ng-repeat='message in $ctrl.pubMessageList'>{{message.from}}: {{message.text}}</li>
-        </ol>
-
-      <div class="chat__footer">
-        <form id="message-form" ng-submit="$ctrl.sendMessage()">
-          <input type="text" name="message" ng-model="$ctrl.text" ng-change = '$ctrl.onKeyDown()' placeholder="Message" autofocus autocomplete="off" />
-         <button type="submit" ng-disabled="$ctrl.disabled">Submit</button>
-        </form>
-        <button id="send-location" ng-click='$ctrl.logout()'>Logout</button>
-      </div>
-
-    </div>
-  </div>
-</div> -->
-
 <div class="wrapper">
-        <div class="main-head">
-            <div class="row heading">
-                <div class="col-sm-2 col-md-1 col-xs-3 heading-avatar">
-                  <div class="heading-avatar-icon">
-                    <img src="https://i1.wp.com/christopherscottedwards.com/wp-content/uploads/2017/08/Generic-Profile.jpg">
-                  </div>
-                </div>
-                <div class="col-sm-4 col-xs-4 heading-name">
-                  <a class="heading-name-meta">{{$ctrl.toUsername | uppercase}}
+  <div class="main-head">
+    <div class="row heading">
+      <div class="col-sm-2 col-md-1 col-xs-3 heading-avatar">
+        <div class="heading-avatar-icon">
+          <img src="https://i1.wp.com/christopherscottedwards.com/wp-content/uploads/2017/08/Generic-Profile.jpg">
+        </div>
+      </div>
+      <div class="col-sm-4 col-xs-4 heading-name">
+        <a class="heading-name-meta">{{$ctrl.toUsername | uppercase}}
                   </a>
-                  <span class="heading-online">Online</span>
-                </div>
-                <div class="col-sm-6 col-xs-6  heading-dot pull-right">
-                    
-                </div>
-              </div>
+        <span ng-show="$ctrl.typingUser === $ctrl.toUsername">&nbsp; typing..</span>
+      </div>
+      <div class="col-sm-6 col-xs-6 pull-right">
+      </div>
+    </div>
+  </div>
 
 
-<!-- 
-            <div class="other-user">
-              <h5>{{$ctrl.toUsername | uppercase}}<span ng-show="$ctrl.typingUser === $ctrl.toUsername">&nbsp;is typing..</span></h5>
-            </div>
-            <div class="flash-message">
-              <flash-message class="flash"></flash-message>
-            </div>
-            <div class="logout">
-                <button class="btn btn-primary" ng-click='$ctrl.logout()'>Logout</button>
-            </div> -->
+  <div class="main-nav">
+    <div class="row heading">
+      <div class="col-sm-3 col-xs-3 heading-avatar">
+        <div class="heading-avatar-icon">
+          <img src="https://i1.wp.com/christopherscottedwards.com/wp-content/uploads/2017/08/Generic-Profile.jpg">
         </div>
-
-
-        <div class="main-nav">
-            <!-- <div class="user-name">
-                <h5>{{$ctrl.username | uppercase}}</h5>
-            </div> -->
-
-            
-            
-            <div class="row heading">
-                <div class="col-sm-3 col-xs-3 heading-avatar">
-                  <div class="heading-avatar-icon">
-                    <img src="https://i1.wp.com/christopherscottedwards.com/wp-content/uploads/2017/08/Generic-Profile.jpg">
-                  </div>
-                </div>
-                <div class="col-sm-6 col-xs-6 heading-name">
-                    <span class="heading-name-meta">{{$ctrl.username | uppercase}}</span>
-                </div>
-                <div class="col-sm-1 col-xs-1 heading-dot pull-right">
-                  <i class="fa fa-power-off fa-2x -toggle pull-right" aria-hidden="true" ng-click='$ctrl.logout()'></i>
-                </div>
-              </div>
-
-
-
-            <div class="users-list">
-                <div class="row searchBox">
-                    <div class="col-sm-12 searchBox-inner">
-                      <div class="form-group has-feedback">
-                        <input id="searchText" type="text" class="form-control" name="searchText" ng-model="searchUser" placeholder="Search">
-                        <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                      </div>
-                    </div>
-                  </div>
-              <div class="row sideBar">
-                  <div ng-repeat="users in $ctrl.onlineUsers | filter : searchUser" ng-show="users.username" ng-click="$ctrl.sendToOne(users.username)" class="row sideBar-body">
-                      <div class="col-sm-3 col-xs-3 sideBar-avatar">
-                        <div class="avatar-icon">
-                          <img src="https://i1.wp.com/christopherscottedwards.com/wp-content/uploads/2017/08/Generic-Profile.jpg">
-                        </div>
-                      </div>
-                      <div class="col-sm-9 col-xs-9 sideBar-main">
-                        <div class="row">
-                          <div class="col-sm-8 col-xs-8 sideBar-name">
-                            <span class="name-meta">{{users.username | uppercase}}<span ng-show="$ctrl.typingUser === users.username">typing...</span>
-                          </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-              </div>
-
-    
-                <!-- <div>
-                    <input type="text" class="form-control" ng-model="searchUser" placeholder="Search contacts..." />
-                </div>
-                <ul class="list-group">
-                   <li ng-repeat="users in $ctrl.onlineUsers | filter : searchUser" ng-show="users.username" ng-click="$ctrl.sendToOne(users.username)" class="list-group-item user_link">{{users.username | uppercase}}<span ng-show="$ctrl.typingUser === users.username">typing...</span></li>
-                 </ul> -->
-            </div>
-        </div>
-      <div ng-show ="!$ctrl.toUsername" class="content">
-          <flash-message></flash-message>
-        <div class="container">
-          <div class="jumbotron jumbotron-fluid">
-            <h1>Welcome to Conversations</h1>
-            <p>click on a user to start chatting with them.. if there are no users please add more</p>
+      </div>
+      <div class="col-sm-6 col-xs-6 heading-name">
+        <span class="heading-name-meta">{{$ctrl.username | uppercase}}</span>
+      </div>
+      <div class="col-sm-1 col-xs-1 heading-dot pull-right">
+        <i class="fa fa-power-off fa-2x -toggle pull-right" aria-hidden="true" ng-click='$ctrl.logout()'></i>
+      </div>
+    </div>
+    <div class="users-list">
+      <div class="row searchBox">
+        <div class="col-sm-12 searchBox-inner">
+          <div class="form-group has-feedback">
+            <input id="searchText" type="text" class="form-control" name="searchText" ng-model="searchUser" placeholder="Search">
+            <span class="glyphicon glyphicon-search form-control-feedback"></span>
           </div>
         </div>
       </div>
-      <div ng-show = "$ctrl.toUsername" class="content" scroll-glue = "$ctrl.glued" class="message-body">
-            
-        <div ng-repeat='message in $ctrl.pvtMessageList[$ctrl.selectedIndex].messages track by $index'>
-          
-          <div ng-class="$ctrl.messagePosition(message.from)">
-                  <div ng-class="$ctrl.messageOwner(message.from)">
-                      <div class="message-text">
-                          {{message.from}} : {{message.text}}
-                      </div>
-                      <span class="message-time pull-right">{{message.createdAt | amCalendar:referenceTime:formats}}</span>
-                  </div>
-                </div>
+      <div class="row sideBar">
+        <div ng-repeat="users in $ctrl.onlineUsers | filter : searchUser" ng-show="users.username" ng-click="$ctrl.sendToOne(users.username)" class="row sideBar-body">
+          <div class="col-sm-3 col-xs-3 sideBar-avatar">
+            <div class="avatar-icon">
+              <img src="https://i1.wp.com/christopherscottedwards.com/wp-content/uploads/2017/08/Generic-Profile.jpg">
             </div>
-            <flash-message></flash-message>
-      </div>
-        <div ng-show="$ctrl.toUsername" class="main-footer">
-            <div class="row reply">
-              <form class="form" ng-submit="$ctrl.sendMessage()">
-                  <div class="col-sm-10 col-xs-10 reply-main">
-                      <textarea class="form-control" rows="1" id="comment" ng-model="$ctrl.text" ng-change = '$ctrl.onKeyDown()' placeholder="Message" autofocus autocomplete="off" ng-disabled = "$ctrl.disabled" required></textarea>
-                    </div>
-                    <div class="col-sm-1 col-xs-1 ">
-                      <button type="submit" ng-disabled="$ctrl.disabled">Send</button>
-                    </div>
-
-                  
-              </form>
+          </div>
+          <div class="col-sm-9 col-xs-9 sideBar-main">
+            <div class="row">
+              <div class="col-sm-5 col-xs-5 sideBar-name">
+                <span class="name-meta">{{users.username | uppercase}}<span ng-show="$ctrl.typingUser === users.username">&nbsp;typing...</span>
+                </span>
+              </div>
             </div>
-
-
-          <!-- <form class="form" ng-submit="$ctrl.sendMessage()">
-            <textarea type="text" name="message" ng-model="$ctrl.text" ng-change = '$ctrl.onKeyDown()' placeholder="Message" autofocus autocomplete="off" ng-disabled = "$ctrl.disabled" />
-           <button class="btn btn-primary" type="submit" ng-disabled="$ctrl.disabled">Submit</button>
-          </form> -->
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+  <div ng-show="!$ctrl.toUsername" class="content">
+    <div class="container">
+      <div class="jumbotron jumbotron-fluid">
+        <h1>Welcome to Conversations</h1>
+        <p>click on a user to start chatting with them.. if there are no users please add more</p>
+      </div>
+    </div>
+  </div>
+  <div ng-show="$ctrl.toUsername" class="content" scroll-glue="$ctrl.glued" class="message-body">
+
+    <div ng-repeat='message in $ctrl.pvtMessageList[$ctrl.selectedIndex].messages track by $index'>
+
+      <div ng-class="$ctrl.messagePosition(message.from)">
+        <div ng-class="$ctrl.messageOwner(message.from)">
+          <div class="message-text">
+            {{message.from}} : {{message.text}}
+          </div>
+          <span class="message-time pull-right">{{message.createdAt | amCalendar:referenceTime:formats}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-show="$ctrl.toUsername" class="main-footer">
+    <div class="row reply">
+      <form class="form" ng-submit="$ctrl.sendMessage()">
+        <div class="col-sm-10 col-xs-10 reply-main">
+          <textarea class="form-control" rows="1" id="comment" ng-model="$ctrl.text" ng-change='$ctrl.onKeyDown()' placeholder="Message" autofocus autocomplete="off" ng-disabled="$ctrl.disabled" required></textarea>
+        </div>
+        <div class="col-sm-1 col-xs-1 ">
+          <button type="submit" ng-disabled="$ctrl.disabled">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

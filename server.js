@@ -10,10 +10,57 @@ const express = require('express'),
       fs = require('fs'),
       path =  require('path'),
       publicPath = path.join(__dirname + '/public'),
+      async = require('async'),
       port = process.env.PORT || 3000;
 
 
-mongoose.connect('mongodb://localhost/chat_app');
+app.use(function(err, req, res, next){
+  console.log(err.stack);
+  res.status(500).json({
+    error : "Sorry something is broken!"
+  })
+})
+
+mongoose.Promise = Promise;
+
+mongoose.connection.on("connected", () => {
+  console.log("Connection Established");
+});
+
+mongoose.connection.on("reconnected", () => {
+  console.log("Connection Reestablished");
+});
+
+mongoose.connection.on("disconnected", () => {
+  console.log("Connection Disconnected");
+});
+
+mongoose.connection.on("close", () => {
+  console.log("Connection Closed");
+});
+
+mongoose.connection.on("error", (error) => {
+  console.log("ERROR: " + error);
+});
+
+var nodeSchema = new mongoose.Schema({}, { bufferCommands: false });
+var Node = mongoose.model('Node', nodeSchema);
+
+run().catch(error => console.error(error));
+
+async function run() {
+  await mongoose.connect('mongodb://localhost/chat_app', {
+    autoReconnect: true,
+    reconnectTries: 1000000,
+    reconnectInterval: 3000,
+    bufferMaxEntries: 0
+  });
+
+  while (true) {
+    await new Promise(resolve => setTimeout(() => resolve(), 2000));
+  }
+}
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(publicPath));
@@ -52,8 +99,6 @@ passport.use(new LocalStrategy(function(username, password, done){
   });
 }));
 
-
-//FIXME:0 : gives error when 'fails to serialize user into session' when the authentication fails'
 passport.serializeUser(function(user, done){
   done(null, user.id);
 });

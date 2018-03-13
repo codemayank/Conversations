@@ -1,5 +1,7 @@
 <div class="col-xs-10 centered-form">
+
   <div class="centered-form__form">
+    <flash-message></flash-message>
     <div ng-show="error" class="alert alert-danger">{{$ctrl.errorMessage}}</div>
     <form class="form" ng-submit="$ctrl.register()">
       <div class="form-group">
@@ -12,12 +14,12 @@
       </div>
       <div class="form-group">
         <label>Password</label>
-          <input type="password" class="form-control" name="password" ng-model="$ctrl.registerForm.password" required>
-        </div>
-        <div>
-          <button type="submit" class="btn btn-primary" ng-disabled="$ctrl.disabled">Register</button>
-          <a class="btn btn-primary" ng-disabled="$ctrl.disabled"  href="/#!/login">Back to Login</a>
-        </div>
+        <input type="password" class="form-control" name="password" ng-model="$ctrl.registerForm.password" required>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary" ng-disabled="$ctrl.disabled">Register</button>
+        <a class="btn btn-primary" ng-disabled="$ctrl.disabled" href="/#!/login">Back to Login</a>
+      </div>
     </form>
   </div>
 </div>
