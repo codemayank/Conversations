@@ -25,3 +25,4 @@ To use the app on local server
 ```
 
 3. The app should now be open on localhost port 3000.
+4. The app is best viewed on Desktop.
