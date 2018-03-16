@@ -13,7 +13,7 @@ A one-to-one chat messenger made using Node.js, Express, MongoDB, socketio and A
 Usage
 =====
 
-Visit [Conversations](ec2-52-221-208-37.ap-southeast-1.compute.amazonaws.com) to use the application.
+Visit [Conversations](http://ec2-52-221-208-37.ap-southeast-1.compute.amazonaws.com) to use the application.
 
 To run the app on local server on your machine.
 
@@ -28,7 +28,7 @@ Once you have the above programs installed follow the below steps.
 ```bash
   git clone https://github.com/codemayank/Conversations.git
 ```
-2. Navigate to the directory where conversations is installed.
+2. Navigate to the directory where the sourcecode for conversations has been downloaded.
 
 3. install all the dependencies.
 
