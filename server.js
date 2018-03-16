@@ -49,10 +49,6 @@ var Node = mongoose.model('Node', nodeSchema);
 run().catch(error => console.error(error));
 
 async function run() {
-<<<<<<< HEAD
-
-=======
->>>>>>> parent of 14db742... Setup PM2
   await mongoose.connect('mongodb://localhost/chat_app', {
     autoReconnect: true,
     reconnectTries: 1000000,
