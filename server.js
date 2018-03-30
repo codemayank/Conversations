@@ -49,7 +49,7 @@ var Node = mongoose.model('Node', nodeSchema);
 run().catch(error => console.error(error));
 
 async function run() {
-  await mongoose.connect('mongodb://mayank:yadav@ds115799.mlab.com:15799/conversations', {
+  await mongoose.connect('mongodb://localhost/chat_app', {
     autoReconnect: true,
     reconnectTries: 1000000,
     reconnectInterval: 3000,
