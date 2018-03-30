@@ -13,7 +13,7 @@ A one-to-one chat messenger made using Node.js, Express, MongoDB, socketio and A
 Usage
 =====
 
-Visit [Conversations](http://ec2-52-221-208-37.ap-southeast-1.compute.amazonaws.com) to use the application.
+Visit [Conversations](https://gentle-badlands-63404.herokuapp.com) to use the application.
 
 To run the app on local server on your machine.
 
